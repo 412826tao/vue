@@ -93,7 +93,7 @@ export function parse (
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
 
   delimiters = options.delimiters
-
+ // 开始编译，解析相关变量
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
   const whitespaceOption = options.whitespace
@@ -201,6 +201,8 @@ export function parse (
     }
   }
 
+  // 解析html相关代码
+
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -210,6 +212,7 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    // 遇到起始标签调用
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -220,6 +223,8 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
+
+      // 遇到一个起始节点就创建一个ASTElement元素，单根的一个对象
 
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {

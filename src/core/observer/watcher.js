@@ -127,10 +127,13 @@ export default class Watcher {
    */
   addDep (dep: Dep) {
     const id = dep.id
+    // 是否和当前的dep建立关系
     if (!this.newDepIds.has(id)) {
+      // 没有就创建dep和watcher的关系
       this.newDepIds.add(id)
       this.newDeps.push(dep)
       if (!this.depIds.has(id)) {
+        // 创建dep和watcher
         dep.addSub(this)
       }
     }
@@ -163,12 +166,14 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
-    if (this.lazy) {
+    // 给计算属性使用
+    if (this.lazy) { // computed会定一个lazy
       this.dirty = true
-    } else if (this.sync) {
+    } else if (this.sync) { // 强制同步更新时会配置sync
       this.run()
     } else {
-      queueWatcher(this)
+      // watcher入队，值发生变化的是时候不是直接更新，而是放在队列里面
+      queueWatcher(this) // 把自己作为参数传进去
     }
   }
 

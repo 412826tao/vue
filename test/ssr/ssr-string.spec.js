@@ -1409,7 +1409,7 @@ describe('SSR: renderToString', () => {
         }
       }
     }, result => {
-      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>vue.js</div></div>')
+      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>MVue.js</div></div>')
       done()
     })
   })
@@ -1456,7 +1456,7 @@ describe('SSR: renderToString', () => {
         }
       }
     }, result => {
-      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>vue.js</div></div>')
+      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>MVue.js</div></div>')
       done()
     })
   })
@@ -1495,7 +1495,7 @@ describe('SSR: renderToString', () => {
         })
       }
     }, result => {
-      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>vue.js</div></div>')
+      expect(result).toContain('<div data-server-rendered="true"><span>42</span> <div>MVue.js</div></div>')
       done()
     })
   })

@@ -30,6 +30,7 @@ export function setActiveInstance(vm: Component) {
 }
 
 export function initLifecycle (vm: Component) {
+  // 初始化时，只有根组件和父组件
   const options = vm.$options
 
   // locate first non-abstract parent
@@ -41,10 +42,13 @@ export function initLifecycle (vm: Component) {
     parent.$children.push(vm)
   }
 
+  // 定义vm.$parent
   vm.$parent = parent
+  // 定义vm.$root
   vm.$root = parent ? parent.$root : vm
-
+  // 定义vm.$children
   vm.$children = []
+  // 定义vm.$refs
   vm.$refs = {}
 
   vm._watcher = null
@@ -56,6 +60,7 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  // _update ->将虚拟DOM转化为真实DOM
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -86,14 +91,15 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // updated hook is called by the scheduler to ensure that children are
     // updated in a parent's updated hook.
   }
-
+  // 强制更新
   Vue.prototype.$forceUpdate = function () {
     const vm: Component = this
     if (vm._watcher) {
+      // 将所有的_watcher 更新一遍
       vm._watcher.update()
     }
   }
-
+  // 实例销毁
   Vue.prototype.$destroy = function () {
     const vm: Component = this
     if (vm._isBeingDestroyed) {

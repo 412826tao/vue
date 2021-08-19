@@ -19,7 +19,7 @@ export default class Dep {
     this.id = uid++
     this.subs = []
   }
-
+ //往自己的sub 里面去push
   addSub (sub: Watcher) {
     this.subs.push(sub)
   }
@@ -30,6 +30,7 @@ export default class Dep {
 
   depend () {
     if (Dep.target) {
+      //当前watcher的添加紧订阅者管理数组里
       Dep.target.addDep(this)
     }
   }
@@ -43,6 +44,7 @@ export default class Dep {
       // order
       subs.sort((a, b) => a.id - b.id)
     }
+    // 循环遍历，subs 就是所有的watcher实例，
     for (let i = 0, l = subs.length; i < l; i++) {
       subs[i].update()
     }

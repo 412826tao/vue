@@ -34,6 +34,7 @@ import {
 
 // inline hooks to be invoked on component VNodes during patch
 const componentVNodeHooks = {
+  // 实例化 挂载
   init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
     if (
       vnode.componentInstance &&
@@ -41,17 +42,21 @@ const componentVNodeHooks = {
       vnode.data.keepAlive
     ) {
       // kept-alive components, treat as a patch
+      // 缓存情况
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     } else {
+      // 全新组件创建的情况
+      // 创建组件实例
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
       )
+      // 子组件挂载
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
-
+ // 预打包，打补丁之前执行
   prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
     const options = vnode.componentOptions
     const child = vnode.componentInstance = oldVnode.componentInstance
@@ -64,6 +69,7 @@ const componentVNodeHooks = {
     )
   },
 
+  // 被插入之后执行
   insert (vnode: MountedComponentVNode) {
     const { context, componentInstance } = vnode
     if (!componentInstance._isMounted) {
@@ -84,6 +90,7 @@ const componentVNodeHooks = {
     }
   },
 
+  // 被销毁时执行
   destroy (vnode: MountedComponentVNode) {
     const { componentInstance } = vnode
     if (!componentInstance._isDestroyed) {
@@ -144,6 +151,7 @@ export function createComponent (
     }
   }
 
+  // 数据处理
   data = data || {}
 
   // resolve constructor options in case global mixins are applied after
@@ -151,6 +159,8 @@ export function createComponent (
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
+
+  // 双向绑定的数据处理
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
@@ -165,11 +175,14 @@ export function createComponent (
 
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
+
+  // 事件处理，组件上会有事件的监听
   const listeners = data.on
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
   data.on = data.nativeOn
 
+  // 抽象组件如何处理
   if (isTrue(Ctor.options.abstract)) {
     // abstract components do not keep anything
     // other than props & listeners & slot
@@ -183,10 +196,13 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  // 安装组件管理钩子
   installComponentHooks(data)
 
   // return a placeholder vnode
   const name = Ctor.options.name || tag
+  // 创建当前组件的VNode
+  // 创建的名称vue-component开头；
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,
@@ -202,6 +218,8 @@ export function createComponent (
     return renderRecyclableComponentTemplate(vnode)
   }
 
+  // 返回当前自定义组件的虚拟节点
+  // 虚拟节点生成真实的dom，还需要patch
   return vnode
 }
 

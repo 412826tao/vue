@@ -84,9 +84,12 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   }
 }
 
+// 将cb函数放回调队列队尾
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {
+    // 回调函数错误处理。 try...catch
+    // if ...else 的处理只是将回调函数入队，而没有进行执行
     if (cb) {
       try {
         cb.call(ctx)
@@ -99,6 +102,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
   })
   if (!pending) {
     pending = true
+    //异步执行的函数
     timerFunc()
   }
   // $flow-disable-line

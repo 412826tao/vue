@@ -122,7 +122,7 @@ const builds = {
   // Runtime+compiler development build (Browser)
   'web-full-dev': {
     entry: resolve('web/entry-runtime-with-compiler.js'),
-    dest: resolve('dist/vue.js'),
+    dest: resolve('dist/MVue.js'),
     format: 'umd',
     env: 'development',
     alias: { he: './entity-decoder' },
@@ -200,7 +200,7 @@ const builds = {
   'weex-framework': {
     weex: true,
     entry: resolve('weex/entry-framework.js'),
-    dest: resolve('packages/weex-vue-framework/index.js'),
+    dest: resolve('packages/weex-vue-framework/index-学习h.js'),
     format: 'cjs'
   },
   // Weex compiler (CommonJS). Used by Weex's Webpack loader.

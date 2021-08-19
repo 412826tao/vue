@@ -41,10 +41,13 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // 为每个属性创建订阅者管理数组
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
+    // 如果传入的值是数组，
     if (Array.isArray(value)) {
+      // 覆盖数组原型方法
       if (hasProto) {
         protoAugment(value, arrayMethods)
       } else {
@@ -52,6 +55,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      // 传入的值非数组的处理
       this.walk(value)
     }
   }
@@ -64,6 +68,7 @@ export class Observer {
   walk (obj: Object) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
+      // 对对象上的每个key进行拦截
       defineReactive(obj, keys[i])
     }
   }
@@ -108,10 +113,12 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 传进来一个对象，为其创建一个observe实例，
   if (!isObject(value) || value instanceof VNode) {
     return
   }
   let ob: Observer | void
+  // 如果做过响应式，那么_ob_存在，就直接返回
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -121,8 +128,10 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 如果未做过，就创建一个新的实例Observe实例
     ob = new Observer(value)
   }
+  // ？？？
   if (asRootData && ob) {
     ob.vmCount++
   }
@@ -140,8 +149,10 @@ export function defineReactive (
   shallow?: boolean
 ) {
   const dep = new Dep()
-
+ // 获取对象属性描述符，在这里是用户自定义的一些属性
+  // 获取指定对象的自身属性描述符。自身属性描述符是指直接在对象上定义（而非从对象的原型继承）的描述符
   const property = Object.getOwnPropertyDescriptor(obj, key)
+  // 属性描述符存在且是非可配置的
   if (property && property.configurable === false) {
     return
   }
@@ -152,17 +163,25 @@ export function defineReactive (
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
+  //核心： 递归，如果val是对象，则获取一个子oberser实例，一个对象就会有一个observer实例
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      // 依赖收集
       const value = getter ? getter.call(obj) : val
+      // Dep.target 可以理解为watcher的实例，每次触发watcher实例的时候，会手动触发，get事件一下获取当前值，
+      // 将实例放在Dep.target上；
       if (Dep.target) {
+        // dep和watcher是n对n的关系，除了页面渲染{{name}}会触发watcher以外；还有可能是computed 或者w                    atch触发的事件监听；
+        // 双向添加两者关系，将当前获取数据创建Watcher实例添加订阅者管理数组
         dep.depend()
+        // 若存在子observer
         if (childOb) {
+          // 把当前的watcher和子ob中的dep建立关系
           childOb.dep.depend()
+          // 数组的处理
           if (Array.isArray(value)) {
             dependArray(value)
           }
@@ -188,6 +207,7 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal)
+      // 通知更新
       dep.notify()
     }
   })

@@ -50,6 +50,7 @@ export function initState (vm: Component) {
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
+  // 判断data是否存在
   if (opts.data) {
     initData(vm)
   } else {
@@ -110,7 +111,9 @@ function initProps (vm: Component, propsOptions: Object) {
 }
 
 function initData (vm: Component) {
+  // 获取data
   let data = vm.$options.data
+  // data可能是个函数，也可能是对象
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -123,6 +126,7 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  // 属性和方法重复判断
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
@@ -130,6 +134,7 @@ function initData (vm: Component) {
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
+      // data属性和方法不能重复
       if (methods && hasOwn(methods, key)) {
         warn(
           `Method "${key}" has already been defined as a data property.`,
@@ -137,6 +142,7 @@ function initData (vm: Component) {
         )
       }
     }
+    // data属性和props不能重复
     if (props && hasOwn(props, key)) {
       process.env.NODE_ENV !== 'production' && warn(
         `The data property "${key}" is already declared as a prop. ` +
@@ -148,6 +154,7 @@ function initData (vm: Component) {
     }
   }
   // observe data
+  // 对data数据的响应式处理
   observe(data, true /* asRootData */)
 }
 
@@ -339,9 +346,11 @@ export function stateMixin (Vue: Class<Component>) {
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
+  // $set
   Vue.prototype.$set = set
+  // $delete
   Vue.prototype.$delete = del
-
+  // $watch
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,

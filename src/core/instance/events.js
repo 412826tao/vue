@@ -13,7 +13,9 @@ export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
+  // 从选项中获取到parent（父级）中声明的事件监听器
   const listeners = vm.$options._parentListeners
+  // 如果监听器存在，子组件就去注册事件
   if (listeners) {
     updateComponentListeners(vm, listeners)
   }

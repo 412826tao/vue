@@ -56,6 +56,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   if (el.parent) {
     el.pre = el.pre || el.parent.pre
   }
+  // 从这里可以看出 for的优先级比if高，先判断的for，再判断的if
 
   if (el.staticRoot && !el.staticProcessed) {
     return genStatic(el, state)
@@ -189,6 +190,10 @@ export function genFor (
   altGen?: Function,
   altHelper?: string
 ): string {
+  // v-for="item in items"
+  // exp===items
+  // el.alias === item
+  debugger
   const exp = el.for
   const alias = el.alias
   const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''

@@ -25,6 +25,9 @@ const ALWAYS_NORMALIZE = 2
 
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
+
+//举例子： h('div', {}, [child1, child2])
+
 export function createElement (
   context: Component,
   tag: any,

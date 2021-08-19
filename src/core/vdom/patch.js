@@ -122,6 +122,8 @@ export function createPatchFunction (backend) {
 
   let creatingElmInVPre = 0
 
+  // 组件或者元素的创建
+  // 将vnode变成真实的dom
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -131,6 +133,7 @@ export function createPatchFunction (backend) {
     ownerArray,
     index
   ) {
+    // 自定义组件创建
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // This vnode was used in a previous render!
       // now it's used as a new node, overwriting its elm would cause
@@ -145,6 +148,7 @@ export function createPatchFunction (backend) {
       return
     }
 
+    // 原生标签
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
@@ -163,6 +167,7 @@ export function createPatchFunction (backend) {
         }
       }
 
+      //把当前标签创建一个元素
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode)
@@ -180,11 +185,14 @@ export function createPatchFunction (backend) {
           }
           insert(parentElm, vnode.elm, refElm)
         }
+        // 创建一个元素，设置完样式之后，进行递归，孩子去创建
         createChildren(vnode, children, insertedVnodeQueue)
         if (appendAsTree) {
           if (isDef(data)) {
+            // 处理时间属性的初始化
             invokeCreateHooks(vnode, insertedVnodeQueue)
           }
+          // 把节点插入
           insert(parentElm, vnode.elm, refElm)
         }
       } else {
@@ -207,10 +215,15 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 自定义组件的创建过程
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
+    // 获取数据
     let i = vnode.data
+    // 在data中有定义
     if (isDef(i)) {
+      // 看实例是否已经存在，keepAlive的情况
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
+      // 如果不存在，就需要初始化一下init
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
       }
@@ -218,8 +231,12 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+
+      // 上面创建过程已经完成，组件实例已存在
       if (isDef(vnode.componentInstance)) {
+        // 初始化组建：组建上面有事件，属性。都需要提前执行，initComponent
         initComponent(vnode, insertedVnodeQueue)
+        // 插入元素 插入dom
         insert(parentElm, vnode.elm, refElm)
         if (isTrue(isReactivated)) {
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm)

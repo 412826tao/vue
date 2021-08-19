@@ -531,7 +531,7 @@ describe('vdom patch: children', () => {
     expect(`Duplicate keys detected: 'b'`).toHaveBeenWarned()
   })
 
-  it('should warn with duplicate keys: patchVnode with empty oldVnode', () => {
+  it('should warn with duplicate keys: patchVnode.js with empty oldVnode', () => {
     function makeNode (key) {
       return new VNode('li', { key: key })
     }

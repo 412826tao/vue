@@ -162,7 +162,11 @@ function callActivatedHooks (queue) {
  * pushed when the queue is being flushed.
  */
 export function queueWatcher (watcher: Watcher) {
+  // 只会进入队列一次；所以需要把id拿出来，进行判断 。
+  // 一个组建一个watcher；当前的watcher放在队列一次就可以，不关心怎么改值，只用最后一个的值；
+  // 值会用最后一次的值，但是队列的id只有一个，上面的更改对应的一个id；过程随便改，用最后一次更新的值。
   const id = watcher.id
+  // 如果队列里面不存在。在放到队列里面
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {
@@ -177,6 +181,7 @@ export function queueWatcher (watcher: Watcher) {
       queue.splice(i + 1, 0, watcher)
     }
     // queue the flush
+    // 如果没有正在执行的watcher就去执行
     if (!waiting) {
       waiting = true
 
@@ -184,6 +189,7 @@ export function queueWatcher (watcher: Watcher) {
         flushSchedulerQueue()
         return
       }
+      //异步执行flushSchedulerQueue
       nextTick(flushSchedulerQueue)
     }
   }
